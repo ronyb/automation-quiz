@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 
-function ClientDetailsForm (onSubmit, onSkip) {
+const ClientDetailsForm = ({onSubmit, onSkip}) => {
   
   const [formData, setFormData] = useState({
     fullName: '',

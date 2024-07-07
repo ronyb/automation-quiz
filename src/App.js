@@ -1,13 +1,18 @@
 import './App.css';
 import React, { useState } from 'react';
-import AppState from './AppState';
-import ClientDetails from './ClientDetails';
+import AppState from './js/AppState';
+import ClientDetails from './js/ClientDetails';
 import ClientDetailsForm from './components/ClientDetailsForm';
+import Question from './components/Question';
+import { questions } from './js/questions';
 
-function App() {
+const App = () => {
 
   const [currentState, setCurrentState] = useState(AppState.ClientDetailsForm);
   const [clientDetails, setClientDetails] = useState(new ClientDetails("unknown_name", "unknown_role", "unknown_company", "unknown_email"));
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState(Array(questions.length).fill(null));
+  const [score, setScore] = useState(0);
 
   const handleClientDetailsFormSubmit = (clientDetails) => {
     setClientDetails(clientDetails);
@@ -18,6 +23,35 @@ function App() {
     setCurrentState(AppState.Questions);
   };
 
+  const handleAnswer = (answer) => {
+    
+    const newAnswers = [...answers];
+    newAnswers[currentQuestion] = answer;
+    setAnswers(newAnswers);
+
+    if (answer === questions[currentQuestion].answers[0]) {
+      setScore(score + 5);
+    }
+
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    }
+    else {
+      setCurrentState(AppState.Results);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestion > 0) {
+      
+      if (answers[currentQuestion - 1] === questions[currentQuestion - 1].answers[0]) {
+        setScore(score - 5);
+      }
+
+      setCurrentQuestion(currentQuestion - 1);
+    }
+  };
+
   let content;
   if (currentState === AppState.ClientDetailsForm) {
     //content = "Client Details Form";
@@ -25,9 +59,6 @@ function App() {
   }
   else if (currentState === AppState.Questions) {
     
-    content = "Question";
-
-    /*
     content = <Question
                 question={questions[currentQuestion].question}
                 answers={questions[currentQuestion].answers}
@@ -35,7 +66,7 @@ function App() {
                 currentQuestion={currentQuestion}
                 totalQuestions={questions.length}
                 handlePrevious={handlePrevious}
-              />*/
+              />
   }
   else if (currentState === AppState.Results) {
     content = "Results";
