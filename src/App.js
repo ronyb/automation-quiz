@@ -4,6 +4,7 @@ import AppState from './js/AppState';
 import ClientDetails from './js/ClientDetails';
 import ClientDetailsForm from './components/ClientDetailsForm';
 import Question from './components/Question';
+import Results from './components/Results';
 import { questions } from './js/questions';
 
 const App = () => {
@@ -52,6 +53,14 @@ const App = () => {
     }
   };
 
+  const handleStartOver = () => {
+    setCurrentQuestion(0);
+    setAnswers(Array(questions.length).fill(null));
+    setScore(0);
+    setCurrentState(AppState.ClientDetailsForm);
+    setClientDetails(new ClientDetails("unknown_name", "unknown_role", "unknown_company", "unknown_email"));
+  };
+
   let content;
   if (currentState === AppState.ClientDetailsForm) {
     //content = "Client Details Form";
@@ -69,8 +78,7 @@ const App = () => {
               />
   }
   else if (currentState === AppState.Results) {
-    content = "Results";
-    //content = <Results questions={questions} answers={answers} score={score} clientDetails={clientDetails} onStartOver={handleStartOver} />
+    content = <Results questions={questions} answers={answers} score={score} clientDetails={clientDetails} onStartOver={handleStartOver} />
   }
 
   return (
