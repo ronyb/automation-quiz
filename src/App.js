@@ -9,76 +9,76 @@ import { questions } from './js/questions';
 
 const App = () => {
 
-  const [currentState, setCurrentState] = useState(AppState.ClientDetailsForm);
-  const [clientDetails, setClientDetails] = useState(new ClientDetails("unknown_name", "unknown_role", "unknown_company", "unknown_email"));
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState(Array(questions.length).fill(null));
-  const [score, setScore] = useState(0);
+  const [currentAppState, setCurrentAppState] = useState(AppState.ClientDetailsForm);
+  const [clientDetailsObj, setClientDetailsObj] = useState(new ClientDetails("unknown_name", "unknown_role", "unknown_company", "unknown_email"));
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [userAnswers, setUserAnswers] = useState(Array(questions.length).fill(null));
+  const [userScore, setUserScore] = useState(0);
 
   const handleClientDetailsFormSubmit = (clientDetails) => {
-    setClientDetails(clientDetails);
-    setCurrentState(AppState.Questions);
+    setClientDetailsObj(clientDetails);
+    setCurrentAppState(AppState.Questions);
   };
 
   const handleSkip = () => {
-    setCurrentState(AppState.Questions);
+    setCurrentAppState(AppState.Questions);
   };
 
   const handleAnswer = (answer) => {
     
-    const newAnswers = [...answers];
-    newAnswers[currentQuestion] = answer;
-    setAnswers(newAnswers);
+    const newAnswers = [...userAnswers];
+    newAnswers[currentQuestionIndex] = answer;
+    setUserAnswers(newAnswers);
 
-    if (answer === questions[currentQuestion].answers[0]) {
-      setScore(score + 5);
+    if (answer === questions[currentQuestionIndex].answers[0]) {
+      setUserScore(userScore + 5);
     }
 
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
     else {
-      setCurrentState(AppState.Results);
+      setCurrentAppState(AppState.Results);
     }
   };
 
   const handlePrevious = () => {
-    if (currentQuestion > 0) {
+    if (currentQuestionIndex > 0) {
       
-      if (answers[currentQuestion - 1] === questions[currentQuestion - 1].answers[0]) {
-        setScore(score - 5);
+      if (userAnswers[currentQuestionIndex - 1] === questions[currentQuestionIndex - 1].answers[0]) {
+        setUserScore(userScore - 5);
       }
 
-      setCurrentQuestion(currentQuestion - 1);
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
 
   const handleStartOver = () => {
-    setCurrentQuestion(0);
-    setAnswers(Array(questions.length).fill(null));
-    setScore(0);
-    setCurrentState(AppState.ClientDetailsForm);
-    setClientDetails(new ClientDetails("unknown_name", "unknown_role", "unknown_company", "unknown_email"));
+    setCurrentQuestionIndex(0);
+    setUserAnswers(Array(questions.length).fill(null));
+    setUserScore(0);
+    setCurrentAppState(AppState.ClientDetailsForm);
+    setClientDetailsObj(new ClientDetails("unknown_name", "unknown_role", "unknown_company", "unknown_email"));
   };
 
   let content;
-  if (currentState === AppState.ClientDetailsForm) {
+  if (currentAppState === AppState.ClientDetailsForm) {
     //content = "Client Details Form";
     content = <ClientDetailsForm onSubmit={handleClientDetailsFormSubmit} onSkip={handleSkip} />
   }
-  else if (currentState === AppState.Questions) {
+  else if (currentAppState === AppState.Questions) {
     
     content = <Question
-                question={questions[currentQuestion].question}
-                answers={questions[currentQuestion].answers}
+                question={questions[currentQuestionIndex].question}
+                answers={questions[currentQuestionIndex].answers}
                 handleAnswer={handleAnswer}
-                currentQuestion={currentQuestion}
+                currentQuestion={currentQuestionIndex}
                 totalQuestions={questions.length}
                 handlePrevious={handlePrevious}
               />
   }
-  else if (currentState === AppState.Results) {
-    content = <Results questions={questions} answers={answers} score={score} clientDetails={clientDetails} onStartOver={handleStartOver} />
+  else if (currentAppState === AppState.Results) {
+    content = <Results questions={questions} answers={userAnswers} score={userScore} clientDetails={clientDetailsObj} onStartOver={handleStartOver} />
   }
 
   return (
